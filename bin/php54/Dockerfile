@@ -42,6 +42,20 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 RUN pecl install xdebug-2.4.0RC4 && docker-php-ext-enable xdebug \
     && echo "xdebug.remote_enable=1" >> /usr/local/etc/php/php.ini
+    
+ENV NVM_VERSION v0.39.3
+ENV NODE_VERSION v14.21.2
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default" | bash
 
 # Insure an SSL directory exists
 RUN mkdir -p /etc/apache2/ssl

@@ -76,6 +76,20 @@ libpng-dev && \
     rm -rf /var/lib/apt/lists/* && \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg && \
     docker-php-ext-install gd
+    
+ENV NVM_VERSION v0.39.3
+ENV NODE_VERSION v14.21.2
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default" | bash
 
 # Insure an SSL directory exists
 RUN mkdir -p /etc/apache2/ssl

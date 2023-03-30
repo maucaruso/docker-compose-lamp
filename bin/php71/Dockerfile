@@ -43,6 +43,20 @@ RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ 
 RUN docker-php-ext-install -j$(nproc) gd
 
+ENV NVM_VERSION v0.39.3
+ENV NODE_VERSION v14.21.2
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default" | bash
+
 # Insure an SSL directory exists
 RUN mkdir -p /etc/apache2/ssl
 
